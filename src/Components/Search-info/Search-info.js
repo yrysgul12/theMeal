@@ -20,7 +20,7 @@ const SearchInfo = () => {
   }
 
   return (
-    <div className={s.container}>
+    <div className='container'>
       <div className={s.content}>
         {search ? (
           <List

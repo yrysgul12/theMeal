@@ -9,7 +9,9 @@ const initialState = {
   popularInfo: [],
   text: "",
   randomMeal: [],
-  search: []
+  search: [],
+  country: [],
+  countryInfo: [],
 };
 
 export const getLatestMeal = createAsyncThunk(
@@ -59,30 +61,46 @@ export const getPopularInfo = createAsyncThunk(
 );
 export const getRandomMeal = createAsyncThunk(
   "randomMeal/getRandom",
-  async (_,{rejectWithValue, dispatch})=>{
+  async (_, { rejectWithValue, dispatch }) => {
     try {
-      const random = [1,2,3,4,5,6,7,8];
+      const random = [1, 2, 3, 4, 5, 6, 7, 8];
       const responses = await Promise.all(
-        random.map(()=> instance.get(`random.php`))
+        random.map(() => instance.get(`random.php`))
       );
       const randomMealsData = responses.map(
         (response) => response.data.meals[0]
-      )
+      );
       console.log(randomMealsData);
-      dispatch(getRandom(randomMealsData))
-    } catch (error){
-      rejectWithValue("Error fetching random Meal",error)
+      dispatch(getRandom(randomMealsData));
+    } catch (error) {
+      rejectWithValue("Error fetching random Meal", error);
     }
-   }
-   );
+  }
+);
 
-   export const getSearchMeals = createAsyncThunk(
-    'search/getSearchMeals',
-    async (elem,{dispatch}) =>{
-      const result = await instance.get(`search.php?s=${elem}`)
-      dispatch(getSearchMeal(result.data.meals))
-    }
-   )
+export const getSearchMeals = createAsyncThunk(
+  "search/getSearchMeals",
+  async (elem, { dispatch }) => {
+    const result = await instance.get(`search.php?s=${elem}`);
+    dispatch(getSearchMeal(result.data.meals));
+  }
+);
+
+export const getCountryMeals = createAsyncThunk(
+  "country/getCountryMeals",
+  async (_, { rejectWithValue, dispatch }) => {
+    const result = await instance.get("list.php?a=list");
+    dispatch(getCountry(result.data.meals));
+  }
+);
+
+export const getCountryInfoMeal = createAsyncThunk(
+  "countryInfo/getCountryInfoMeal",
+  async (elem, { rejectWithValue, dispatch }) => {
+    const res = await instance.get(`filter.php?a=${elem}`);
+    dispatch(getCountryInfo(res.data.meals))
+  }
+);
 
 const mealSlice = createSlice({
   name: "products",
@@ -106,12 +124,18 @@ const mealSlice = createSlice({
     onDescription: (state, action) => {
       state.text = action.payload;
     },
-    getRandom: (state,action) => {
+    getRandom: (state, action) => {
       state.randomMeal = action.payload;
     },
-    getSearchMeal: (state,action) => {
+    getSearchMeal: (state, action) => {
       state.search = action.payload;
-    }
+    },
+    getCountry: (state, action) => {
+      state.country = action.payload;
+    },
+    getCountryInfo: (state, action) => {
+      state.countryInfo = action.payload;
+    },
   },
 });
 
@@ -123,7 +147,9 @@ export const {
   popularInfoMeal,
   onDescription,
   getRandom,
-  getSearchMeal
+  getSearchMeal,
+  getCountry,
+  getCountryInfo,
 } = mealSlice.actions;
 
 export default mealSlice.reducer;

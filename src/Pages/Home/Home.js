@@ -11,7 +11,7 @@ import { onDescription } from "../../Redux-toolkit/MealSlice/MealSlice";
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { latest, popular, randomMeal,randomIngredient } = useSelector((state) => state.products);
+  const { latest, popular, randomMeal,randomIngredient,country } = useSelector((state) => state.products);
 
   const handleMealInfo = (id, title) => {
     navigate(`/meal/${id}/${title}`);
@@ -32,6 +32,11 @@ const Home = () => {
   const randomItemClick = (title)=>{
     navigate(`/ingredient/${title}`)
   }
+  const countryMeals = (title) =>{
+    navigate(`/meals/${title}`)
+  }
+
+
   const [input,setInput]=useState('')
 
   const handleSubmit = (e)=>{
@@ -109,6 +114,26 @@ const Home = () => {
       )}/>
       </div>
       </div>
+      <div className={styles.country}>
+        <h3>Country</h3>
+        <div className={styles.country_meals}>
+          <List
+          items={country}
+          renderItem={(elem,i) => (
+            <div onClick={()=> countryMeals(elem.strArea)} className={styles.flag}>
+              <img src={`https://www.themealdb.com/images/icons/flags/big/64/${elem.strArea.substr(
+                      0,
+                      2
+                    )}.png`} alt="" />
+
+            </div>
+          )}
+          />
+
+        </div>
+
+      </div>
+    
     </div>
   );
 };
